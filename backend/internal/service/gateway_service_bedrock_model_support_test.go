@@ -38,8 +38,8 @@ func TestGatewayServiceIsModelSupportedByAccount_BedrockCustomMappingStillActsAs
 		t.Fatalf("expected matched custom mapping to be supported")
 	}
 
-	if !svc.isModelSupportedByAccount(account, "claude-opus-4-6") {
-		t.Fatalf("expected default Bedrock alias fallback to remain supported")
+	if svc.isModelSupportedByAccount(account, "claude-opus-4-6") {
+		t.Fatalf("expected unmapped model to be rejected when custom mapping is configured")
 	}
 
 	if svc.isModelSupportedByAccount(account, "claude-3-5-sonnet-20241022") {

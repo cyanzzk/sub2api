@@ -145,7 +145,14 @@ func ResolveBedrockModelID(account *Account, requestedModel string) (string, boo
 		return "", false
 	}
 
-	mappedModel := account.GetMappedModel(requestedModel)
+	mappedModel, mappingMatched := account.ResolveMappedModel(requestedModel)
+
+	// 如果账户配了 model_mapping 但未命中，直接拒绝，防止用户通过
+	// Bedrock 原生 ID（如 us.anthropic.claude-sonnet-4-6）绕过 Profile 映射
+	if !mappingMatched && len(account.GetModelMapping()) > 0 {
+		return "", false
+	}
+
 	modelID, shouldAdjustRegion, ok := normalizeBedrockModelID(mappedModel)
 	if !ok {
 		return "", false
